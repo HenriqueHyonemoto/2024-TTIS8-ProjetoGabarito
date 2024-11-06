@@ -1,9 +1,13 @@
 pkg load image;  % Carregar pacote de processamento de imagens
+clc;
+
+figure(1),imshow(gabarito);
+%funcionalidade de anular questao caso mais de uma seja sssinalada
 
 % Função principal
 function gabarito = analisar_gabarito(imagem)
     % Carregar imagem e converter para escala de cinza
-    img = imread(imagem);
+    img = imread("GabaritoPreenchido1.jpg");
     img_gray = rgb2gray(img);  % Converter para escala de cinza
 
     % Binarizar a imagem (preto e branco)
@@ -50,9 +54,9 @@ function gabarito = analisar_gabarito(imagem)
     end
 
     % Exibir o gabarito final
+    figure(1),imshow(gabarito);
     disp('Respostas Assinaladas:');
     disp(gabarito);
 end
 
-% Teste com uma imagem do gabarito
-gabarito =
+
