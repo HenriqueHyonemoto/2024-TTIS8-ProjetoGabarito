@@ -2,7 +2,7 @@ pkg load image;  % Carregar pacote de processamento de imagens
 clc;
 
 % Carrega e binariza a imagem
-gabarito = imread("GabaritoP1.jpg");
+gabarito = imread("GabaritoP3.jpg");
 gabarito = im2bw(gabarito);
 
 % Exibe a imagem binarizada
