@@ -2,7 +2,7 @@ pkg load image;  % Carregar pacote de processamento de imagens
 clc;
 
 % Carrega e binariza a imagem
-gabarito = imread("GabaritoP3.jpg");
+gabarito = imread("GabaritoP4.jpg");
 gabarito = im2bw(gabarito);
 
 % Exibe a imagem binarizada
@@ -14,12 +14,6 @@ distanciaY = 156;    % Distância entre os quadrados das questões
 
 % Função para verificar todas as alternativas de uma questão
 function alternativa_assinalada = verificar_questao(gabarito, x_inicial, y_inicial, tamanho, distanciaX)
-  % gabarito: imagem binarizada do gabarito (0 = preto, 1 = branco)
-  % x_inicial, y_inicial: coordenadas do canto superior esquerdo do quadrado da alternativa A
-  % tamanho: tamanho do lado do quadrado
-  % distanciaX: distância entre os quadrados das alternativas
-  % distanciaY: distância entre os quadrados das questões
-
   % Array para armazenar o status das alternativas (A, B, C, D)
   alternativas = cell(1, 4);
   alternativas_letras = ['A', 'B', 'C', 'D'];
@@ -58,24 +52,35 @@ function alternativa_assinalada = verificar_questao(gabarito, x_inicial, y_inici
   end
 end
 
-% Função para verificar todas as 8 questões
-function verificar_todas_questoes(gabarito, tamanho, distanciaX, distanciaY)
+% Função principal para corrigir a prova com base no gabarito fornecido
+function corrigir_prova(gabarito, respostas_certas, tamanho, distanciaX, distanciaY)
+  nota_final = 0;  % Inicializa a nota final
+
   % Para cada questão, vamos calcular as coordenadas e verificar as alternativas
-  for questao = 1:8
+  for questao = 1:length(respostas_certas)
     % Calcula a coordenada inicial (x_inicial e y_inicial) para cada questão
     y_inicial = 296 + (questao - 1) * distanciaY; % Distância entre as questões (na direção Y)
-
-    % A primeira alternativa da questão (alternativa A) está na coordenada x_inicial
-    x_inicial = 341;
+    x_inicial = 341;  % A primeira alternativa da questão (alternativa A) está na coordenada x_inicial
 
     % Chama a função para verificar as alternativas da questão
     resultado = verificar_questao(gabarito, x_inicial, y_inicial, tamanho, distanciaX);
 
     % Exibe o resultado para a alternativa assinalada ou "ANULADA"
     fprintf('Questão %d: %s\n', questao, resultado);
+
+    % Verifica se o resultado está correto e incrementa a nota
+    if resultado == respostas_certas(questao)
+      nota_final = nota_final + 1;  % Incrementa a nota se a resposta estiver correta
+    end
   end
+
+  % Exibe a nota final
+  fprintf('Nota Final: %d/%d\n', nota_final, length(respostas_certas));
 end
 
-% Chama a função para verificar todas as 8 questões
-verificar_todas_questoes(gabarito, tamanho, distanciaX, distanciaY);
+% Definindo o gabarito das respostas corretas
+respostas_certas = ['A', 'B', 'C', 'C','D','A','B','C'];
+
+% Chama a função para corrigir a prova
+corrigir_prova(gabarito, respostas_certas, tamanho, distanciaX, distanciaY);
 

@@ -10,58 +10,63 @@ figure(1), imshow(gabarito);
 
 tamanho = 96;      % Tamanho de cada quadrado de alternativa
 distanciaX = 142;   % Distância entre os quadrados das alternativas
-distanciaY = 0; % Distância entre os quadrados das questoes
+distanciaY = 156;   % Distância entre os quadrados das questões
 
 % Função para verificar todas as alternativas de uma questão
 function alternativa_assinalada = verificar_questao(gabarito, x_inicial, y_inicial, tamanho, distanciaX)
-  % gabarito: imagem binarizada do gabarito (0 = preto, 1 = branco)
-  % x_inicial, y_inicial: coordenadas do canto superior esquerdo do quadrado da alternativa A
-  % tamanho: tamanho do lado do quadrado
-  % distanciaX: distância entre os quadrados das alternativas
-  % distanciaY: distância entre os quadrados das questoes
-
   % Array para armazenar o status das alternativas (A, B, C, D)
-  alternativas = cell(1, 4);
   alternativas_letras = ['A', 'B', 'C', 'D'];
-
-  % Limiar para determinar se a área está assinalada
-  limiar = 0.75;
-
-  % Variável para contar o número de alternativas assinaladas
+  limiar = 0.75;  % Limiar de intensidade para determinar marcação
   num_assinaladas = 0;
-  alternativa_assinalada = 'ANULADA'; % Default se nenhuma ou mais de uma alternativa estiver assinalada
+  alternativa_assinalada = 'ANULADA';
 
   % Itera sobre as quatro alternativas (A, B, C, D)
   for i = 1:4
-    % Calcula a coordenada x para a alternativa atual
-    x = x_inicial + (i - 1) * distanciaX;
-
-    % Extrai a área correspondente ao quadrado da alternativa
-    area_quadrado = gabarito(y_inicial:y_inicial+tamanho-1, x:x+tamanho-1);
-
-    % Calcula a média de intensidade da área
-    media_intensidade = mean(area_quadrado(:));
-    %disp(['Média de intensidade da alternativa ', alternativas_letras(i), ': ', num2str(media_intensidade)]);
+    x = x_inicial + (i - 1) * distanciaX; % Calcula a coordenada x para a alternativa atual
+    area_quadrado = gabarito(y_inicial:y_inicial+tamanho-1, x:x+tamanho-1); % Extrai a área da alternativa
+    media_intensidade = mean(area_quadrado(:));  % Calcula a média de intensidade da área
 
     % Verifica se a média de intensidade está abaixo do limiar (assinalado)
     if media_intensidade < limiar
-      alternativas{i} = 'Assinalada'; % Assinalado
-      num_assinaladas = num_assinaladas + 1; % Conta a alternativa assinalada
+      num_assinaladas = num_assinaladas + 1;
       alternativa_assinalada = alternativas_letras(i); % Armazena a alternativa assinalada
-    else
-      alternativas{i} = 'Não Assinalada'; % Não assinalado
     end
   end
 
-  % Se mais de uma alternativa for assinalada ou nenhuma, retorna "ANULADA"
+  % Retorna "ANULADA" se mais de uma alternativa for marcada ou nenhuma
   if num_assinaladas != 1
     alternativa_assinalada = 'ANULADA';
   end
 end
 
-% Testa a função para a questão 1 (posição inicial da alternativa A)
-resultado = verificar_questao(gabarito, 341, 296, tamanho, distanciaX);
+% Função principal para corrigir a prova com base no gabarito fornecido
+function corrigir_prova(gabarito, respostas_certas, tamanho, distanciaX, distanciaY)
+  nota_final = 0;  % Inicializa a nota final
 
-% Exibe o resultado para a alternativa assinalada ou "ANULADA"
-fprintf('Questão 1: %s\n', resultado);
+  % Para cada questão, calcula as coordenadas e verifica as alternativas
+  for questao = 1:length(respostas_certas)
+    y_inicial = 296 + (questao - 1) * distanciaY; % Coordenada y para cada questão
+    x_inicial = 341;  % Coordenada x para a alternativa A
+
+    % Verifica a alternativa assinalada para a questão
+    resultado = verificar_questao(gabarito, x_inicial, y_inicial, tamanho, distanciaX);
+
+    % Exibe o resultado da questão e compara com o gabarito
+    fprintf('Questão %d: %s\n', questao, resultado);
+
+    % Se a resposta estiver correta, incrementa a nota
+    if resultado == respostas_certas(questao)
+      nota_final = nota_final + 1;
+    end
+  end
+
+  % Exibe a nota final
+  fprintf('Nota Final: %d/%d\n', nota_final, length(respostas_certas));
+end
+
+% Definindo o gabarito das respostas corretas
+respostas_certas = ['A', 'B', 'C', 'C', 'D'];  % Gabarito esperado
+
+% Chama a função para corrigir a prova
+corrigir_prova(gabarito, respostas_certas, tamanho, distanciaX, distanciaY);
 
